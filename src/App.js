@@ -8,18 +8,29 @@ function App() {
   const [detail, setDetail] = useState([]);
 
   const fetchSeplls = async () => {
-    const { data } = await Axios.get("https://www.dnd5eapi.co/api/spells");
-    const allspells = data.results;
-
-    for (let i = 0; i < 3; i++) {
-      await Axios.get(
-        `https://www.dnd5eapi.co${allspells[i].url}`
-      ).then(res => detail.push(res.data));
+    if(localStorage.getItem('allspells') === null) {
+      const { data } = await Axios.get("https://www.dnd5eapi.co/api/spells");
+      const allspells = data.results;
+      localStorage.setItem('allspells', JSON.stringify(allspells));  
     }
   };
 
   useEffect(() => {
     fetchSeplls();
+  },[]);
+
+  useEffect(() => {
+    const fetchDesc = async () => {
+      const spell = JSON.parse(localStorage.getItem('allspells'));
+      const all = []
+      for (let i = 0; i < spell.length; i++) {
+        const desc = await Axios.get(`https://www.dnd5eapi.co${spell[i].url}`);
+        all.push(desc.data);
+      }
+      setDetail(all);
+      console.log(all);
+    };  
+    fetchDesc();
   },[]);
 
   const addToFavorite = (spell) => {
@@ -46,7 +57,7 @@ function App() {
       <div className="right">
         <h3>Favourite</h3>
         {fav.map((f) => (
-          <div>{f}</div>
+          <div className="fav">{f}</div>
         ))}
       </div>
     </div>

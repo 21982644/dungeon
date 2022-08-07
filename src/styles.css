@@ -16,7 +16,7 @@
     float: right;
   }
   
-  .Collapsible__trigger {
+  .Collapsible__trigger, .fav {
     border: 0.1em solid rgb(215, 246, 247);
     border-radius: 10%;
     margin-top: 30px;
